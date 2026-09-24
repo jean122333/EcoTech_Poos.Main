@@ -1,9 +1,9 @@
 # main.py
-<<<<<<< HEAD
+
 from dominio.departamento import Departamento
-=======
+
 from persistencia.conexion import probar_conexion
->>>>>>> 51b3d8f420ce611fa077507695e5e98cb87c2273
+
 from persistencia.crear_bd import crear_tablas
 from dominio.empleado import Empleado
 from persistencia.empleado_dao import EmpleadoDAO
@@ -33,7 +33,7 @@ for empleado in nuevos:
     else:
         print("Ya existía:", mostrar(existente))
 
-<<<<<<< HEAD
+
 EmpleadoDAO.insertar(empleado)
 print("Insertado:", empleado.mostrar_datos())
 
@@ -66,4 +66,4 @@ print("Listado:")
 for item in EmpleadoDAO.listar():
     print(" ", mostrar(item))
 
->>>>>>> 51b3d8f420ce611fa077507695e5e98cb87c2273
+
