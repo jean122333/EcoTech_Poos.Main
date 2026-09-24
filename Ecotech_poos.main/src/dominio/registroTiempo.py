@@ -5,7 +5,7 @@ class RegistroTiempo:
         self.fecha = fecha
         self.horas_trabajadas = horas_trabajadas
 
-    # ---- encapsulamiento: atributos privados + validación ----
+    #encapsulamiento: atributos privados + validación
     @property
     def fecha(self) -> str:
         return self._fecha
@@ -27,7 +27,7 @@ class RegistroTiempo:
             raise ValueError("Las horas trabajadas deben ser un número entre 0 y 24")
         self._horas_trabajadas = float(valor)
 
-    # ---- comportamiento del UML ----
+    # comportamiento del UML
     def calcular_horas(self) -> float:
         return self._horas_trabajadas
 
