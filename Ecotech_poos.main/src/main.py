@@ -1,20 +1,19 @@
 # main.py
-
-from dominio.departamento import Departamento
-
 from persistencia.conexion import probar_conexion
-
 from persistencia.crear_bd import crear_tablas
-from dominio.empleado import Empleado
 from persistencia.empleado_dao import EmpleadoDAO
+from dominio.empleado import Empleado
+from dominio.departamento import Departamento
+from dominio.proyecto import Proyecto
 
 
 def mostrar(empleado):
     return f"[{empleado.id_empleado}] {empleado.nombre} - ${empleado.salario:,.0f}"
 
 
+# ---------- Parte 1: conexión y base de datos ----------
 if not probar_conexion():
-    raise SystemExit("Revisa el archivo .env y que MySQL esté iniciado (XAMPP).")
+    raise SystemExit("Revisa el archivo .env y que MySQL esté iniciado.")
 
 crear_tablas()
 
@@ -33,32 +32,6 @@ for empleado in nuevos:
     else:
         print("Ya existía:", mostrar(existente))
 
-
-EmpleadoDAO.insertar(empleado)
-print("Insertado:", empleado.mostrar_datos())
-
-encontrado = EmpleadoDAO.buscar_por_id(empleado.id_empleado)
-print("Encontrado:", encontrado)
-
-print("Listado:")
-for item in EmpleadoDAO.listar():
-    print(item)
-
-departamento = Departamento("Ventas", 1)
-departamento.agregar_empleado(empleado)
-print("Departamento:", empleado.departamento.nombre)
-print("Empleados en el departamento:", departamento.cantidad_empleados())
- 
-
-empleado.registrar_horas("2026-09-24", 8)
-empleado.registrar_horas("2026-09-25", 6)
-print("Horas registradas:")
-for registro in empleado.registros:
-    print(registro.mostrar_registro())
-    
-  
-    
-=======
 primero = EmpleadoDAO.buscar_por_nombre("Ana Torres")
 print("Encontrado por id:", mostrar(EmpleadoDAO.buscar_por_id(primero.id_empleado)))
 
@@ -66,4 +39,23 @@ print("Listado:")
 for item in EmpleadoDAO.listar():
     print(" ", mostrar(item))
 
+# ---------- Parte 2: demo de relaciones ----------
+print("\n--- Demo de relaciones ---")
+ana, luis = nuevos
 
+# Departamento 1 ── 0..* Empleado (se sincroniza en ambos sentidos)
+ti = Departamento(nombre="Tecnología", gerente="Marta Soto", id_departamento=1)
+ti.agregar_empleado(ana)
+ti.agregar_empleado(luis)
+print("Empleados en", ti.nombre, ":", ti.cantidad_empleados())
+print("Departamento de Ana:", ana.departamento.nombre)
+
+# Empleado 0..* ── 0..* Proyecto (también en ambos sentidos)
+web = Proyecto("Sitio web", "2026-09-24", "Rediseño del sitio corporativo")
+web.asignar_empleado(ana)
+web.asignar_empleado(luis)
+print("Empleados en", web.nombre, ":", [e.nombre for e in web.empleados])
+print("Proyectos de Ana:", [p.nombre for p in ana.proyectos])
+print("¿Asignar de nuevo a Ana?", web.asignar_empleado(ana))  # False: no se duplica
+
+# Empleado 1 ── 0..*
