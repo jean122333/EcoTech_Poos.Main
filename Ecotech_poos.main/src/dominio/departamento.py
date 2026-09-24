@@ -1,4 +1,4 @@
-# src/dominio/proyecto.py
+# src/dominio/departamento.py
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
@@ -6,11 +6,11 @@ if TYPE_CHECKING:  # solo para los tipos: evita el import circular con Empleado
     from dominio.empleado import Empleado
 
 
-class Proyecto:
-    def __init__(self, nombre: str, fecha_inicio: str, descripcion: str):
+class Departamento:
+    def __init__(self, nombre: str, gerente: str, id_departamento: int):
         self.nombre = nombre
-        self.fecha_inicio = fecha_inicio
-        self.descripcion = descripcion
+        self.gerente = gerente
+        self.id_departamento = id_departamento
         self._empleados: list[Empleado] = []
 
     # ---- encapsulamiento: atributos privados + validación ----
@@ -21,42 +21,40 @@ class Proyecto:
     @nombre.setter
     def nombre(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("El nombre del proyecto no puede estar vacío")
+            raise ValueError("El nombre del departamento no puede estar vacío")
         self._nombre = valor.strip()
 
     @property
-    def fecha_inicio(self) -> str:
-        return self._fecha_inicio
+    def gerente(self) -> str:
+        return self._gerente
 
-    @fecha_inicio.setter
-    def fecha_inicio(self, valor: str):
+    @gerente.setter
+    def gerente(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("La fecha de inicio no puede estar vacía")
-        self._fecha_inicio = valor.strip()
+            raise ValueError("El gerente no puede estar vacío")
+        self._gerente = valor.strip()
 
     @property
-    def descripcion(self) -> str:
-        return self._descripcion
+    def id_departamento(self) -> int:
+        return self._id_departamento
 
-    @descripcion.setter
-    def descripcion(self, valor: str):
-        if not isinstance(valor, str):
-            raise ValueError("La descripción debe ser texto")
-        self._descripcion = valor.strip()
+    @id_departamento.setter
+    def id_departamento(self, valor: int):
+        if not isinstance(valor, int) or isinstance(valor, bool) or valor <= 0:
+            raise ValueError("El id del departamento debe ser un entero positivo")
+        self._id_departamento = valor
 
     @property
     def empleados(self) -> tuple:
         return tuple(self._empleados)
 
     # ---- comportamiento del UML ----
-    def asignar_empleado(self, empleado: Empleado) -> bool:
-        """Asigna el empleado al proyecto y sincroniza el otro lado de la relación."""
+    def agregar_empleado(self, empleado: Empleado) -> None:
+        """Agrega el empleado y sincroniza el otro lado de la relación."""
         if empleado in self._empleados:
-            return False
-
+            return
         self._empleados.append(empleado)
-        empleado.agregar_proyecto(self)  # Empleado hace lo mismo con este proyecto
-        return True
+        empleado.asignar_departamento(self)
 
-    def mostrar_datos(self) -> str:
-        return f"{self.nombre} (inicio: {self.fecha_inicio}) - {self.descripcion}"
+    def cantidad_empleados(self) -> int:
+        return len(self._empleados)
