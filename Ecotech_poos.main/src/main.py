@@ -58,4 +58,9 @@ print("Empleados en", web.nombre, ":", [e.nombre for e in web.empleados])
 print("Proyectos de Ana:", [p.nombre for p in ana.proyectos])
 print("¿Asignar de nuevo a Ana?", web.asignar_empleado(ana))  # False: no se duplica
 
-# Empleado 1 ── 0..*
+# Empleado 1 ── 0..* RegistroTiempo
+print("Registrar 8 h:", ana.registrar_horas("2026-09-24", 8))
+print("Registrar 6.5 h:", ana.registrar_horas("2026-09-25", 6.5))
+print("Registrar 30 h (inválido):", ana.registrar_horas("2026-09-26", 30))
+total = sum(r.calcular_horas() for r in ana.registros)
+print("Horas totales de Ana:", total)
