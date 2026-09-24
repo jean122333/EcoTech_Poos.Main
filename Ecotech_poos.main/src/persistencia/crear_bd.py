@@ -8,17 +8,17 @@ def crear_tablas():
     if obtener_motor() == "sqlite":
         sql = '''
             CREATE TABLE IF NOT EXISTS empleado (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_empleado INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT NOT NULL,
-            correo TEXT NOT NULL
+            salario REAL NOT NULL
             )
         '''
     else:
         sql = '''
             CREATE TABLE IF NOT EXISTS empleado (
-            id INT PRIMARY KEY AUTO_INCREMENT,
+            id_empleado INT PRIMARY KEY AUTO_INCREMENT,
             nombre VARCHAR(100) NOT NULL,
-            correo VARCHAR(150) NOT NULL
+            salario DECIMAL(10,2) NOT NULL
             )
         '''
     cursor.execute(sql)

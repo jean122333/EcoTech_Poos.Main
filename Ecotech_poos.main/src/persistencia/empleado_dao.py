@@ -2,6 +2,9 @@
 from dominio.empleado import Empleado
 from persistencia.conexion import abrir_conexion, marcador_sql
 
+# Columnas de la tabla, en el mismo orden que usa _fila_a_empleado()
+_COLUMNAS = "id_empleado, nombre, salario"
+
 
 class EmpleadoDAO:
     @staticmethod
@@ -13,63 +16,57 @@ class EmpleadoDAO:
         sql = f"""
             INSERT INTO empleado (
             nombre,
-            correo
+            salario
             )
             VALUES ({marcador}, {marcador})
         """
 
-        cursor.execute(sql, (empleado.nombre, empleado.correo))
-        empleado.id = cursor.lastrowid
+        cursor.execute(sql, (empleado.nombre, empleado.salario))
+        empleado.id_empleado = cursor.lastrowid
         conexion.commit()
         conexion.close()
         return empleado
-    
 
     @staticmethod
     def _fila_a_empleado(fila):
         return Empleado(
-            id=fila[0],
+            id_empleado=fila[0],
             nombre=fila[1],
-            correo=fila[2]
+            salario=float(fila[2])  # MySQL entrega DECIMAL, se pasa a float
         )
 
     @staticmethod
-    def buscar_por_id(id_empleado):
+    def _buscar_uno(columna, valor):
+        # 'columna' es una constante interna (nunca viene del usuario);
+        # el valor siempre va parametrizado para evitar inyección SQL.
         conexion = abrir_conexion()
         cursor = conexion.cursor()
 
-        marcador = marcador_sql()
-        sql = f"""
-            SELECT id, nombre, correo 
-            FROM empleado WHERE id = {marcador}
-        """
+        sql = f"SELECT {_COLUMNAS} FROM empleado WHERE {columna} = {marcador_sql()}"
+        cursor.execute(sql, (valor,))
 
-        cursor.execute(sql, (id_empleado,))
-        
         fila = cursor.fetchone()
         conexion.close()
 
         if fila is None:
             return None
-
-        #return Empleado(id=fila[0], nombre=fila[1], correo=fila[2])
         return EmpleadoDAO._fila_a_empleado(fila)
+
+    @staticmethod
+    def buscar_por_id(id_empleado):
+        return EmpleadoDAO._buscar_uno("id_empleado", id_empleado)
+
+    @staticmethod
+    def buscar_por_nombre(nombre):
+        return EmpleadoDAO._buscar_uno("nombre", nombre)
 
     @staticmethod
     def listar():
         conexion = abrir_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute(
-            "SELECT id, nombre, correo FROM empleado"
-        )
+        cursor.execute(f"SELECT {_COLUMNAS} FROM empleado")
         filas = cursor.fetchall()
         conexion.close()
 
-        empleados = []
-
-        for fila in filas:
-            empleados.append(EmpleadoDAO._fila_a_empleado(fila))
-
-        return empleados
-
+        return [EmpleadoDAO._fila_a_empleado(fila) for fila in filas]
