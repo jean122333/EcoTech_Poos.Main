@@ -216,7 +216,7 @@ def mostrar_menu():
 
 def main():
     if not probar_conexion():
-        raise SystemExit("Revisa el archivo .env y que MySQL esté iniciado.")
+        raise SystemExit("Revisa el archivo .env y que MariaDB/MySQL esté iniciado.")
 
     try:
         crear_tablas()
