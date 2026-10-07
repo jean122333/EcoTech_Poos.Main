@@ -9,17 +9,47 @@ if TYPE_CHECKING:  # solo para los tipos: evita el import circular
 
 
 class Empleado:
-    def __init__(self, nombre, salario=0.0, id_empleado=None, departamento=None):
+    # id_empleado=None indica que el objeto todavía no está persistido
+    def __init__(self, nombre, correo, salario=0.0, id_empleado=None, departamento=None):
+        self.nombre = nombre
+        self.correo = correo
+        self.salario = salario
         self._id_empleado = id_empleado
-        self._nombre = nombre
-        self._salario = salario
         self._departamento = departamento
         self._proyectos: list[Proyecto] = []
         self._registros: list[RegistroTiempo] = []
 
+    # encapsulamiento: atributos privados + validación
     @property
     def nombre(self):
         return self._nombre
+
+    @nombre.setter
+    def nombre(self, valor):
+        if not isinstance(valor, str) or not valor.strip():
+            raise ValueError("El nombre no puede estar vacío")
+        self._nombre = valor.strip()
+
+    @property
+    def correo(self):
+        return self._correo
+
+    @correo.setter
+    def correo(self, valor):
+        if not isinstance(valor, str) or "@" not in valor or " " in valor.strip():
+            raise ValueError("El correo no es válido")
+        self._correo = valor.strip().lower()
+
+    @property
+    def salario(self):
+        return self._salario
+
+    @salario.setter
+    def salario(self, valor):
+        es_numero = isinstance(valor, (int, float)) and not isinstance(valor, bool)
+        if not es_numero or valor < 0:
+            raise ValueError("El salario debe ser un número mayor o igual a 0")
+        self._salario = float(valor)
 
     @property
     def id_empleado(self):
@@ -29,10 +59,6 @@ class Empleado:
     def id_empleado(self, valor):
         # lo usa el DAO para guardar el id que genera la base de datos
         self._id_empleado = valor
-
-    @property
-    def salario(self):
-        return self._salario
 
     @property
     def departamento(self):
@@ -46,6 +72,7 @@ class Empleado:
     def registros(self) -> tuple:
         return tuple(self._registros)
 
+    # comportamiento del UML
     def get_salario(self):
         return self._salario
 
@@ -73,7 +100,8 @@ class Empleado:
         return True
 
     def __str__(self):
-        return f"Empleado(id={self.id_empleado}, nombre={self.nombre}, salario={self.salario})"
+        return (f"Empleado(id={self.id_empleado}, nombre={self.nombre}, "
+                f"correo={self.correo}, salario={self.salario})")
 
     def mostrar_datos(self) -> str:
-        return f"id:{self.id_empleado} {self.nombre} - ${self.salario:,.0f}"
+        return f"id:{self.id_empleado} {self.nombre} <{self.correo}> - ${self.salario:,.0f}"
