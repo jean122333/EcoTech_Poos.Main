@@ -69,6 +69,12 @@ DB_USER=root
 DB_PASSWORD=
 DB_NAME=ecotech
 ```
+
+# Leer el example y utiliza esto
+# PYTHONPATH=src python src/persistencia/crear_bd.py
+# python src/main.py
+# en la pc UNIversidad, revisar que puerto es 3307 o 3006
+
 5. Ejecutar el programa:
 ```bash
 python src/main.py

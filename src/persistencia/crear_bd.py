@@ -114,9 +114,15 @@ def crear_tablas():
         conexion = abrir_conexion()
         cursor = conexion.cursor()
         tipos = _TIPOS[obtener_motor()]
+        
+        # Desactivamos temporalmente las restricciones de claves foráneas
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
 
         for plantilla in _TABLAS:
             cursor.execute(plantilla.format(**tipos))
+
+        # Volvemos a activar las restricciones de claves foráneas
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
 
         _migrar_empleado(cursor)
         conexion.commit()
