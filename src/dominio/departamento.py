@@ -7,7 +7,9 @@ if TYPE_CHECKING:  # solo para los tipos: evita el import circular con Empleado
 
 
 class Departamento:
-    def __init__(self, nombre: str, gerente: str, id_departamento: int):
+    # id_departamento=None indica que el objeto todavía no está persistido:
+    # la base de datos genera el id y el DAO lo asigna con cursor.lastrowid
+    def __init__(self, nombre: str, gerente: str, id_departamento: int | None = None):
         self.nombre = nombre
         self.gerente = gerente
         self.id_departamento = id_departamento
@@ -35,12 +37,15 @@ class Departamento:
         self._gerente = valor.strip()
 
     @property
-    def id_departamento(self) -> int:
+    def id_departamento(self) -> int | None:
         return self._id_departamento
 
     @id_departamento.setter
-    def id_departamento(self, valor: int):
-        if not isinstance(valor, int) or isinstance(valor, bool) or valor <= 0:
+    def id_departamento(self, valor: int | None):
+        # None = aún no persistido; el DAO asigna aquí el id generado por la BD
+        if valor is not None and (
+            not isinstance(valor, int) or isinstance(valor, bool) or valor <= 0
+        ):
             raise ValueError("El id del departamento debe ser un entero positivo")
         self._id_departamento = valor
 
@@ -58,3 +63,10 @@ class Departamento:
 
     def cantidad_empleados(self) -> int:
         return len(self._empleados)
+
+    def mostrar_datos(self) -> str:
+        return f"[{self.id_departamento}] {self.nombre} - Gerente: {self.gerente}"
+
+    def __str__(self):
+        return (f"Departamento(id={self.id_departamento}, nombre={self.nombre}, "
+                f"gerente={self.gerente})")

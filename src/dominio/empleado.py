@@ -15,7 +15,11 @@ class Empleado:
         self.correo = correo
         self.salario = salario
         self._id_empleado = id_empleado
-        self._departamento = departamento
+        self._departamento = None
+        # id de la clave foránea; se llena al cargar desde la BD o al asignar un departamento
+        self._departamento_id = None
+        if departamento is not None:
+            self.asignar_departamento(departamento)
         self._proyectos: list[Proyecto] = []
         self._registros: list[RegistroTiempo] = []
 
@@ -65,6 +69,18 @@ class Empleado:
         return self._departamento
 
     @property
+    def departamento_id(self):
+        """Id del departamento (clave foránea). None si no tiene departamento."""
+        if self._departamento is not None and self._departamento.id_departamento is not None:
+            return self._departamento.id_departamento
+        return self._departamento_id
+
+    @departamento_id.setter
+    def departamento_id(self, valor):
+        # lo usa el DAO al reconstruir un Empleado desde la BD
+        self._departamento_id = valor
+
+    @property
     def proyectos(self) -> tuple:
         return tuple(self._proyectos)
 
@@ -76,10 +92,14 @@ class Empleado:
     def get_salario(self):
         return self._salario
 
-    def registrar_horas(self, fecha, horas) -> bool:
+    def registrar_horas(self, fecha, horas, descripcion="", proyecto=None) -> bool:
         if horas <= 0 or horas > 24:
             return False
-        registro = RegistroTiempo(fecha, horas)
+        registro = RegistroTiempo(
+            fecha, horas, descripcion,
+            empleado_id=self.id_empleado,
+            proyecto_id=proyecto.id_proyecto if proyecto is not None else None,
+        )
         self._registros.append(registro)
         return True
 
@@ -88,6 +108,7 @@ class Empleado:
         if self._departamento is departamento:
             return False
         self._departamento = departamento
+        self._departamento_id = departamento.id_departamento
         departamento.agregar_empleado(self)
         return True
 
@@ -101,7 +122,8 @@ class Empleado:
 
     def __str__(self):
         return (f"Empleado(id={self.id_empleado}, nombre={self.nombre}, "
-                f"correo={self.correo}, salario={self.salario})")
+                f"correo={self.correo}, salario={self.salario}, "
+                f"departamento_id={self.departamento_id})")
 
     def mostrar_datos(self) -> str:
-        return f"id:{self.id_empleado} {self.nombre} <{self.correo}> - ${self.salario:,.0f}"
+        return f"[{self.id_empleado}] {self.nombre} <{self.correo}> - ${self.salario:,.0f}"
