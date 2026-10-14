@@ -15,7 +15,7 @@ class Departamento:
         self.id_departamento = id_departamento
         self._empleados: list[Empleado] = []
 
-    # ---- encapsulamiento: atributos privados + validación ----
+    #  encapsulamiento: atributos privados + validación 
     @property
     def nombre(self) -> str:
         return self._nombre
@@ -53,7 +53,7 @@ class Departamento:
     def empleados(self) -> tuple:
         return tuple(self._empleados)
 
-    # ---- comportamiento del UML ----
+    #  comportamiento del UML 
     def agregar_empleado(self, empleado: Empleado) -> None:
         """Agrega el empleado y sincroniza el otro lado de la relación."""
         if empleado in self._empleados:

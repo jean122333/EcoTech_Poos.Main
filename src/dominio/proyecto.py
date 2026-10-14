@@ -17,7 +17,7 @@ class Proyecto:
         self._id_proyecto = id_proyecto
         self._empleados: list[Empleado] = []
 
-    # ---- encapsulamiento: atributos privados + validación ----
+    #  encapsulamiento: atributos privados + validación 
     @property
     def id_proyecto(self) -> int | None:
         return self._id_proyecto
@@ -66,7 +66,7 @@ class Proyecto:
     def empleados(self) -> tuple:
         return tuple(self._empleados)
 
-    # ---- comportamiento del UML ----
+    #  comportamiento del UML 
     def asignar_empleado(self, empleado: Empleado) -> bool:
         """Asigna el empleado al proyecto y sincroniza el otro lado de la relación."""
         if empleado in self._empleados:

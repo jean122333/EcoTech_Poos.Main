@@ -16,7 +16,7 @@ MENSAJE_INTEGRIDAD = ("Ya existe un registro con esos datos "
                       "o hace referencia a algo que no existe.")
 
 
-# ---------------------------------------------------------------- manejo de errores
+#  manejo de errores
 def manejar_errores(accion, mensaje_integridad=MENSAJE_INTEGRIDAD):
     """Decorador: ejecuta la operación del menú y responde de forma controlada.
 
@@ -41,7 +41,7 @@ def manejar_errores(accion, mensaje_integridad=MENSAJE_INTEGRIDAD):
     return decorador
 
 
-# ---------------------------------------------------------------- validación de entradas
+#  validación de entradas
 def solicitar_opcion(maximo):
     while True:
         try:
@@ -116,7 +116,7 @@ def confirmar(mensaje):
     return input(f"{mensaje} (s/n): ").strip().lower() in ("s", "si", "sí")
 
 
-# ---------------------------------------------------------------- menú genérico
+#  menú genérico
 def ejecutar_menu(titulo, opciones):
     """Muestra un menú y llama a la función elegida hasta que el usuario elige 0.
 
