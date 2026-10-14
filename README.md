@@ -104,3 +104,17 @@ Si se cambia de motor, los datos no se comparten: cada motor guarda los suyos.
 - **Relación "Consulta"** (Proyecto–Departamento, 1 a 1) del diagrama original:
   no se implementó por decisión del equipo.
 
+## Acceso remoto a MariaDB (phpMyAdmin)
+
+El proyecto lee la conexión desde `.env`, por lo que usar un MariaDB en otro equipo o red no requiere cambiar el código.
+
+1. En phpMyAdmin, pestaña **SQL**, ejecutar (cambiando la clave):
+
+```sql
+##CREATE DATABASE IF NOT EXISTS ecotech CHARACTER SET utf8mb4;
+##CREATE USER IF NOT EXISTS 'ecotech_app'@'%' IDENTIFIED BY 'CLAVE_LARGA';
+##GRANT ALL PRIVILEGES ON ecotech.* TO 'ecotech_app'@'%';
+##FLUSH PRIVILEGES;
+```
+
+2. En el `.env` de cada equipo:
